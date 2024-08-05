@@ -5,12 +5,10 @@ set -eux
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
-docker build -t das-geyser/build -f Solana.Dockerfile .
+docker build --no-cache -t das-geyser/build -f Solana.Dockerfile .
 docker create --name temp das-geyser/build
 mkdir -p $SCRIPT_DIR/geyser-outputs
-mkdir -p $SCRIPT_DIR/solana-outputs
 # copy plugin .so file
 docker container cp temp:/plugin $SCRIPT_DIR/geyser-outputs
 # copy solana executables
-docker container cp temp:/usr/bin $SCRIPT_DIR/solana-outputs
 docker rm temp

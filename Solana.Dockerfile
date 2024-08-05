@@ -1,5 +1,4 @@
-ARG SOLANA_VERSION=v1.17.20
-ARG RUST_VERSION=1.73
+ARG RUST_VERSION=1.75
 FROM rust:$RUST_VERSION-bullseye as builder
 RUN apt-get update \
       && apt-get -y install \
@@ -25,10 +24,5 @@ COPY Cargo.toml /rust/
 COPY Cargo.lock /rust/
 WORKDIR /rust
 RUN cargo build --release
-
-FROM solanalabs/solana:$SOLANA_VERSION
-COPY --from=builder /rust/target/release/libplerkle.so /plugin/plugin.so      
-COPY ./docker .
-RUN chmod +x ./*.sh
-ENTRYPOINT [ "./runs.sh" ]
-CMD [""]
+RUN mkdir -p /plugin
+RUN cp target/release/libplerkle.so /plugin/plugin.so  
